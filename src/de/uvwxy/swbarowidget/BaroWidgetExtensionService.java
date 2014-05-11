@@ -36,11 +36,11 @@ import android.util.Log;
 import com.sonyericsson.extras.liveware.extension.util.ExtensionService;
 import com.sonyericsson.extras.liveware.extension.util.registration.RegistrationInformation;
 
-public class HelloWidgetExtensionService extends ExtensionService {
+public class BaroWidgetExtensionService extends ExtensionService {
 
     public static final String LOG_TAG = "uvwxy_baro";
 
-    public HelloWidgetExtensionService() {
+    public BaroWidgetExtensionService() {
         super();
     }
 
@@ -52,7 +52,7 @@ public class HelloWidgetExtensionService extends ExtensionService {
 
     @Override
     protected RegistrationInformation getRegistrationInformation() {
-        return new HelloWidgetRegistrationInformation(this);
+        return new BaroWidgetRegistrationInformation(this);
     }
 
     @Override

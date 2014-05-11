@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.uvwxy.swbarowidget"
-    android:versionCode="10000"
-    android:versionName="1.0.0" >
+    android:versionCode="1"
+    android:versionName="0.1" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -16,7 +16,7 @@
         android:label="@string/app_name"
         android:theme="@style/ExtensionLightTheme" >
         <activity
-            android:name="de.uvwxy.swbarowidget.HelloWidgetPreferenceActivity"
+            android:name="de.uvwxy.swbarowidget.BaroWidgetPreferenceActivity"
             android:label="@string/preference_activity_title" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,10 +28,10 @@
                 <action android:name="com.sonyericsson.extras.liveware.aef.tunnel.action.BIND" />
             </intent-filter>
         </service>
-        <service android:name="de.uvwxy.swbarowidget.HelloWidgetExtensionService" />
+        <service android:name="de.uvwxy.swbarowidget.BaroWidgetExtensionService" />
 
         <receiver
-            android:name="de.uvwxy.swbarowidget.HelloWidgetExtensionReceiver">
+            android:name="de.uvwxy.swbarowidget.BaroWidgetExtensionReceiver">
             <intent-filter>
 
                 <!-- Generic extension intents. -->

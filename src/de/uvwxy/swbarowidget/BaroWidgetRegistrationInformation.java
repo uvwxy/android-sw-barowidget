@@ -47,7 +47,7 @@ import com.sonyericsson.extras.liveware.extension.util.registration.WidgetContai
 /**
  * Provides information needed during extension registration.
  */
-public class HelloWidgetRegistrationInformation extends RegistrationInformation {
+public class BaroWidgetRegistrationInformation extends RegistrationInformation {
 
     final Context mContext;
     private String extensionKey;
@@ -59,7 +59,7 @@ public class HelloWidgetRegistrationInformation extends RegistrationInformation 
      *
      * @param context The context.
      */
-    protected HelloWidgetRegistrationInformation(Context context) {
+    protected BaroWidgetRegistrationInformation(Context context) {
         if (context == null) {
             throw new IllegalArgumentException("context == null");
         }
@@ -111,7 +111,7 @@ public class HelloWidgetRegistrationInformation extends RegistrationInformation 
     protected WidgetClassList getWidgetClasses(Context context, String hostAppPackageName,
             WidgetContainer widgetContainer) {
         // Return the widget to register.
-        return new WidgetClassList(HelloWidget.class);
+        return new WidgetClassList(BaroWidget.class);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class HelloWidgetRegistrationInformation extends RegistrationInformation 
         ContentValues values = new ContentValues();
 
         values.put(Registration.ExtensionColumns.CONFIGURATION_ACTIVITY,
-                HelloWidgetPreferenceActivity.class.getName());
+                BaroWidgetPreferenceActivity.class.getName());
         values.put(Registration.ExtensionColumns.CONFIGURATION_TEXT,
                 mContext.getString(R.string.configuration_text));
         values.put(Registration.ExtensionColumns.NAME, mContext.getString(R.string.extension_name));

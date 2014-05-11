@@ -7,9 +7,9 @@
     <!-- Configuration text shown in preferences -->
     <string name="configuration_text">Baro-/Altimeter Widget Settings</string>
     <!-- Extension name, shown in preferences -->
-    <string name="extension_name">Baro-/Altimeter Widget</string>
+    <string name="extension_name">BaroWidget</string>
 
-    <string name="extension_info">Baro-/Altimeter Widget</string>
+    <string name="extension_info">BaroWidget</string>
     <string name="preference_option_read_me">TODO:</string>
     <string name="preference_key_read_me">preference_key_read_me</string>
     <string name="preference_option_read_me_txt">TheBaro-/Altimeter Widget displays the current pressure and relative height. The widget is only compatible with WidgetAPI 3 and up</string>

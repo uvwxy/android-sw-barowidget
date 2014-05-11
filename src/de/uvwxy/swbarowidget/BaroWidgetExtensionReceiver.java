@@ -41,12 +41,12 @@ import android.util.Log;
  * The extension receiver receives the extension intents and starts the
  * extension service when they arrive.
  */
-public class HelloWidgetExtensionReceiver extends BroadcastReceiver {
+public class BaroWidgetExtensionReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        Log.d(HelloWidgetExtensionService.LOG_TAG, "onReceive: " + intent.getAction());
-        intent.setClass(context, HelloWidgetExtensionService.class);
+        Log.d(BaroWidgetExtensionService.LOG_TAG, "onReceive: " + intent.getAction());
+        intent.setClass(context, BaroWidgetExtensionService.class);
         context.startService(intent);
     }
 }

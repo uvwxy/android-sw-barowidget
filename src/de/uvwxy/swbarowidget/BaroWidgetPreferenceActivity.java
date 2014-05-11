@@ -45,7 +45,7 @@ import android.util.Log;
  * This preference activity provides a readme dialog containing information
  * about this sample project as well as usage instructions.
  */
-public class HelloWidgetPreferenceActivity extends PreferenceActivity {
+public class BaroWidgetPreferenceActivity extends PreferenceActivity {
     private static final int DIALOG_READ_ME = 1;
 
     @SuppressWarnings("deprecation")
@@ -78,7 +78,7 @@ public class HelloWidgetPreferenceActivity extends PreferenceActivity {
                 dialog = createReadMeDialog();
                 break;
             default:
-                Log.w(HelloWidgetExtensionService.LOG_TAG, "Not a valid dialog id: " + id);
+                Log.w(BaroWidgetExtensionService.LOG_TAG, "Not a valid dialog id: " + id);
                 break;
         }
 

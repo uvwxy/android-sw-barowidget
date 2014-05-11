@@ -32,7 +32,6 @@ Copyright (c) 2011-2013, Sony Mobile Communications AB
 
 package de.uvwxy.swbarowidget;
 
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -41,94 +40,51 @@ import com.sonyericsson.extras.liveware.aef.control.Control;
 import com.sonyericsson.extras.liveware.aef.widget.Widget;
 import com.sonyericsson.extras.liveware.extension.util.widget.BaseWidget;
 
-import de.uvwxy.helper.IntentTools;
 import de.uvwxy.sensors.BarometerReader;
-import de.uvwxy.sensors.SensorReader.SensorResultCallback;
 import de.uvwxy.units.Unit;
 
 /**
  * This demonstrates how to implement a simple text widget.
  */
-class HelloWidget extends BaseWidget {
+class BaroWidget extends BaseWidget {
 
 	public static final int WIDGET_WIDTH_CELLS = 2;
 	public static final int WIDGET_HEIGHT_CELLS = 1;
-	private static final String BARO_WIDGET_SETTINGS = "BARO_SETTINGS";
-	private static final String LAST_VALUE_MB = "LAST_VALE_MB";
+
 	private static final int NUM_REFRESHS = 5;
 	private static final long HEIGHT_RESET_TIMEOUT = 3000;
 	private int refreshCount = 0;
-	private SensorResultCallback cb = new SensorResultCallback() {
-
-		@Override
-		public void result(float[] f) {
-			if (f != null && f.length > 0) {
-				lastValueMB = f[0];
-			}
-		}
-	};
-
-	private BarometerReader baroReader;
-	private float lastValueMB = 0f;
-	private float lastValueHeightRef = 0f;
-	private long lastValueHeightRefSet = System.currentTimeMillis();
-
 	private int longClickCount = 0;
+
+	private BaroLogic baro;
 
 	private Handler mHandler = new Handler();
 	private long delayMillis = 1000;
-	private Runnable mUpdateTimeTask = new Runnable() {
-
-		public void run() {
-
-			// ACTION!
-			updateScreen();
-			refreshCount++;
-
-			if (refreshCount < NUM_REFRESHS) {
-				mHandler.postDelayed(this, delayMillis);
-			} else {
-				refreshCount = 0;
-				pauseHandler();
-			}
-		}
-	};
-
-	private void pauseHandler() {
-		if (baroReader != null) {
-			baroReader.stopReading();
-		}
-		mHandler.removeCallbacks(mUpdateTimeTask);
-	}
-
-	private void unPauseHandler() {
-		if (baroReader == null) {
-			baroReader = new BarometerReader(mContext, -1, cb);
-		}
-		baroReader.startReading();
-		mHandler.removeCallbacks(mUpdateTimeTask);
-		mHandler.postDelayed(mUpdateTimeTask, delayMillis);
-	}
 
 	/**
 	 * Creates a widget extension.
 	 */
-	public HelloWidget(WidgetBundle bundle) {
+	public BaroWidget(WidgetBundle bundle) {
 		super(bundle);
 	}
 
 	@Override
 	public void onStartRefresh() {
-		Log.d(HelloWidgetExtensionService.LOG_TAG, "startRefresh");
-
-		lastValueMB = IntentTools.getSettings(mContext, BARO_WIDGET_SETTINGS).getFloat(LAST_VALUE_MB, 0);
-		Log.d(HelloWidgetExtensionService.LOG_TAG, "loaded " + lastValueMB);
-
+		Log.d(BaroWidgetExtensionService.LOG_TAG, "startRefresh");
+		baro.loadValue();
+		baro.loadValueRelative();
 		restartRefresh();
 	}
 
+	@Override
+	public void onStopRefresh() {
+		Log.d(BaroWidgetExtensionService.LOG_TAG, "stopRefesh");
+		baro.storeValue();
+		baro.storeValueRelative();
+		pauseHandler();
+	}
+
 	private void restartRefresh() {
-		updateScreen();
 		pauseHandler();
 		refreshCount = 0;
 		unPauseHandler();
@@ -136,13 +92,13 @@ class HelloWidget extends BaseWidget {
 
 	private void updateScreen() {
 		Unit uLastValue = Unit.from(Unit.MILLI_BAR);
-		uLastValue.setValue(lastValueMB);
+		uLastValue.setValue(baro.getValue());
 
 		Unit uLastHeight = Unit.from(Unit.METRE);
-		if (lastValueHeightRef > 0){
-			uLastHeight.setValue(BarometerReader.getHeightFromDiff(lastValueMB, lastValueHeightRef));			
+		if (baro.getValueRelative() > 0) {
+			uLastHeight.setValue(BarometerReader.getHeightFromDiff(baro.getValue(), baro.getValueRelative()));
 		} else {
-			uLastHeight.setValue(BarometerReader.getHeight(lastValueMB));
+			uLastHeight.setValue(BarometerReader.getHeight(baro.getValue()));
 		}
 
 		// Create a bundle with last read (pressue)
@@ -161,20 +117,36 @@ class HelloWidget extends BaseWidget {
 		showLayout(R.layout.layout_widget, layoutData);
 	}
 
-	@Override
-	public void onStopRefresh() {
-		Log.d(HelloWidgetExtensionService.LOG_TAG, "stopRefesh");
+	private Runnable mUpdateTimeTask = new Runnable() {
 
-		Editor e = IntentTools.getSettingsEditor(mContext, BARO_WIDGET_SETTINGS);
-		e.putFloat(LAST_VALUE_MB, lastValueMB);
-		e.commit();
-		Log.d(HelloWidgetExtensionService.LOG_TAG, "saved " + lastValueMB);
-		pauseHandler();
+		public void run() {
+			updateScreen();
+			refreshCount++;
+
+			if (refreshCount < NUM_REFRESHS) {
+				mHandler.postDelayed(this, delayMillis);
+			} else {
+				refreshCount = 0;
+				pauseHandler();
+			}
+		}
+	};
+
+	private void pauseHandler() {
+		baro.stop();
+		mHandler.removeCallbacks(mUpdateTimeTask);
+	}
+
+	private void unPauseHandler() {
+		baro.start();
+		updateScreen();
+		mHandler.removeCallbacks(mUpdateTimeTask);
+		mHandler.postDelayed(mUpdateTimeTask, delayMillis);
 	}
 
 	@Override
 	public void onTouch(final int type, final int x, final int y) {
-		Log.d(HelloWidgetExtensionService.LOG_TAG, "onTouch() " + type);
+		Log.d(BaroWidgetExtensionService.LOG_TAG, "onTouch() " + type);
 
 		switch (type) {
 		case 0:
@@ -186,17 +158,16 @@ class HelloWidget extends BaseWidget {
 
 			if (longClickCount % 2 == 0) {
 
-				if (System.currentTimeMillis() - lastValueHeightRefSet < HEIGHT_RESET_TIMEOUT) {
-					lastValueHeightRef = 0;
-					Log.d(HelloWidgetExtensionService.LOG_TAG, "setting ref to 0");
+				if (System.currentTimeMillis() - baro.getValueRelativeSetTime() < HEIGHT_RESET_TIMEOUT) {
+					baro.setValueRelative(0f);
+					Log.d(BaroWidgetExtensionService.LOG_TAG, "setting ref to 0");
 				} else {
-					lastValueHeightRef = lastValueMB;
-					Log.d(HelloWidgetExtensionService.LOG_TAG, "setting ref to " + lastValueMB);
-
+					baro.setValueRelative(baro.getValue());
+					Log.d(BaroWidgetExtensionService.LOG_TAG, "setting ref to " + baro.getValue());
 
 				}
 
-				lastValueHeightRefSet = System.currentTimeMillis();
+				baro.setValueRelativeSetTime(System.currentTimeMillis());
 				restartRefresh();
 			}
 
