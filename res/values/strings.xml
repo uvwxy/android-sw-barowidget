@@ -3,16 +3,16 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">Hello Widget Extension</string>
     <!-- Title of preference activity -->
-    <string name="preference_activity_title">Hello widget settings</string>
+    <string name="preference_activity_title">Baro-/Altimeter Widget Settings</string>
     <!-- Configuration text shown in preferences -->
-    <string name="configuration_text">Hello widget settings</string>
+    <string name="configuration_text">Baro-/Altimeter Widget Settings</string>
     <!-- Extension name, shown in preferences -->
-    <string name="extension_name">Hello widget</string>
+    <string name="extension_name">Baro-/Altimeter Widget</string>
 
-    <string name="extension_info">Hello Widget</string>
-    <string name="preference_option_read_me">READ ME</string>
+    <string name="extension_info">Baro-/Altimeter Widget</string>
+    <string name="preference_option_read_me">TODO:</string>
     <string name="preference_key_read_me">preference_key_read_me</string>
-    <string name="preference_option_read_me_txt">The hello widget displays a simple layout. The widget is only compatible with WidgetAPI 3 and up</string>
+    <string name="preference_option_read_me_txt">TheBaro-/Altimeter Widget displays the current pressure and relative height. The widget is only compatible with WidgetAPI 3 and up</string>
     <string name="hello">Hello!</string>
     <string name="def_pressure">xxxx mb</string>
     <string name="def_height">xx.x m</string>
