@@ -29,24 +29,35 @@ Copyright (c) 2011-2014, Sony Mobile Communications AB
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package de.uvwxy.barometer.swidget;
 
-package de.uvwxy.swbarowidget;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
-/**
- * The extension receiver receives the extension intents and starts the
- * extension service when they arrive.
- */
-public class BaroWidgetExtensionReceiver extends BroadcastReceiver {
+import com.sonyericsson.extras.liveware.extension.util.ExtensionService;
+import com.sonyericsson.extras.liveware.extension.util.registration.RegistrationInformation;
+
+public class BaroWidgetExtensionService extends ExtensionService {
+
+    public static final String LOG_TAG = "uvwxybaro";
+
+    public BaroWidgetExtensionService() {
+        super();
+    }
 
     @Override
-    public void onReceive(final Context context, final Intent intent) {
-        Log.d(BaroWidgetExtensionService.LOG_TAG, "onReceive: " + intent.getAction());
-        intent.setClass(context, BaroWidgetExtensionService.class);
-        context.startService(intent);
+    public void onCreate() {
+        super.onCreate();
+        Log.d(LOG_TAG, "BaroWidgetExtensionService: onCreate");
     }
+
+    @Override
+    protected RegistrationInformation getRegistrationInformation() {
+        return new BaroWidgetRegistrationInformation(this);
+    }
+
+    @Override
+    protected boolean keepRunningWhenConnected() {
+        return false;
+    }
+
 }

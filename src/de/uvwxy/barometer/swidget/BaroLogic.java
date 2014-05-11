@@ -1,7 +1,5 @@
-package de.uvwxy.swbarowidget;
+package de.uvwxy.barometer.swidget;
 
-import lombok.Getter;
-import lombok.Setter;
 import android.content.Context;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
@@ -27,13 +25,11 @@ public class BaroLogic {
 	};
 
 	private BarometerReader baroReader;
-	@Getter
+
 	private float value = 0f;
-	@Getter
-	@Setter
+
 	private float valueRelative = 0f;
-	@Getter
-	@Setter
+
 	private long valueRelativeSetTime = System.currentTimeMillis();
 
 	public BaroLogic(Context ctx) {
@@ -76,4 +72,29 @@ public class BaroLogic {
 			baroReader.stopReading();
 		}
 	}
+
+	public float getValue() {
+		return value;
+	}
+
+	public void setValue(float value) {
+		this.value = value;
+	}
+
+	public float getValueRelative() {
+		return valueRelative;
+	}
+
+	public void setValueRelative(float valueRelative) {
+		this.valueRelative = valueRelative;
+	}
+
+	public long getValueRelativeSetTime() {
+		return valueRelativeSetTime;
+	}
+
+	public void setValueRelativeSetTime(long valueRelativeSetTime) {
+		this.valueRelativeSetTime = valueRelativeSetTime;
+	}
+
 }

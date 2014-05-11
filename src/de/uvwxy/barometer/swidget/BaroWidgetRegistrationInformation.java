@@ -30,7 +30,7 @@ Copyright (c) 2011-2014, Sony Mobile Communications AB
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package de.uvwxy.swbarowidget;
+package de.uvwxy.barometer.swidget;
 
 import java.util.UUID;
 
@@ -38,6 +38,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.sonyericsson.extras.liveware.aef.registration.Registration;
 import com.sonyericsson.extras.liveware.extension.util.ExtensionUtils;
@@ -116,6 +117,7 @@ public class BaroWidgetRegistrationInformation extends RegistrationInformation {
 
     @Override
     public ContentValues getExtensionRegistrationConfiguration() {
+    	Log.d("UVWXY", " REG REG REG REG REG REG REG REG REG REG REG REG REG REG REG");
         String iconHostapp = ExtensionUtils.getUriString(mContext, R.drawable.icon);
         String iconExtension = ExtensionUtils.getUriString(mContext, R.drawable.icon_extension);
 

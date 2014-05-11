@@ -30,7 +30,7 @@ Copyright (c) 2011-2013, Sony Mobile Communications AB
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package de.uvwxy.swbarowidget;
+package de.uvwxy.barometer.swidget;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -66,6 +66,7 @@ class BaroWidget extends BaseWidget {
 	 */
 	public BaroWidget(WidgetBundle bundle) {
 		super(bundle);
+		baro = new BaroLogic(mContext);
 	}
 
 	@Override
@@ -82,6 +83,37 @@ class BaroWidget extends BaseWidget {
 		baro.storeValue();
 		baro.storeValueRelative();
 		pauseHandler();
+	}
+
+	@Override
+	public void onTouch(final int type, final int x, final int y) {
+		Log.d(BaroWidgetExtensionService.LOG_TAG, "onTouch() " + type);
+
+		switch (type) {
+		case 0:
+			restartRefresh();
+			break;
+		case 1:
+			// longclick down + up -> refresh when up -> even click (down + up = 2)
+			longClickCount++;
+
+			if (longClickCount % 2 == 0) {
+
+				if (System.currentTimeMillis() - baro.getValueRelativeSetTime() < HEIGHT_RESET_TIMEOUT) {
+					baro.setValueRelative(0f);
+					Log.d(BaroWidgetExtensionService.LOG_TAG, "setting ref to 0");
+				} else {
+					baro.setValueRelative(baro.getValue());
+					Log.d(BaroWidgetExtensionService.LOG_TAG, "setting ref to " + baro.getValue());
+
+				}
+
+				baro.setValueRelativeSetTime(System.currentTimeMillis());
+				restartRefresh();
+			}
+
+			break;
+		}
 	}
 
 	private void restartRefresh() {
@@ -142,37 +174,6 @@ class BaroWidget extends BaseWidget {
 		updateScreen();
 		mHandler.removeCallbacks(mUpdateTimeTask);
 		mHandler.postDelayed(mUpdateTimeTask, delayMillis);
-	}
-
-	@Override
-	public void onTouch(final int type, final int x, final int y) {
-		Log.d(BaroWidgetExtensionService.LOG_TAG, "onTouch() " + type);
-
-		switch (type) {
-		case 0:
-			restartRefresh();
-			break;
-		case 1:
-			// longclick down + up -> refresh when up -> even click (down + up = 2)
-			longClickCount++;
-
-			if (longClickCount % 2 == 0) {
-
-				if (System.currentTimeMillis() - baro.getValueRelativeSetTime() < HEIGHT_RESET_TIMEOUT) {
-					baro.setValueRelative(0f);
-					Log.d(BaroWidgetExtensionService.LOG_TAG, "setting ref to 0");
-				} else {
-					baro.setValueRelative(baro.getValue());
-					Log.d(BaroWidgetExtensionService.LOG_TAG, "setting ref to " + baro.getValue());
-
-				}
-
-				baro.setValueRelativeSetTime(System.currentTimeMillis());
-				restartRefresh();
-			}
-
-			break;
-		}
 	}
 
 	@Override
