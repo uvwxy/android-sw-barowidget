@@ -56,9 +56,10 @@ class HelloWidget extends BaseWidget {
 	private static final String BARO_WIDGET_SETTINGS = "BARO_SETTINGS";
 	private static final String LAST_VALUE_MB = "LAST_VALE_MB";
 	private static final int NUM_REFRESHS = 5;
+	private static final long HEIGHT_RESET_TIMEOUT = 3000;
 	private int refreshCount = 0;
 	private SensorResultCallback cb = new SensorResultCallback() {
-		
+
 		@Override
 		public void result(float[] f) {
 			if (f != null && f.length > 0) {
@@ -69,6 +70,10 @@ class HelloWidget extends BaseWidget {
 
 	private BarometerReader baroReader;
 	private float lastValueMB = 0f;
+	private float lastValueHeightRef = 0f;
+	private long lastValueHeightRefSet = System.currentTimeMillis();
+
+	private int longClickCount = 0;
 
 	private Handler mHandler = new Handler();
 	private long delayMillis = 1000;
@@ -79,8 +84,8 @@ class HelloWidget extends BaseWidget {
 			// ACTION!
 			updateScreen();
 			refreshCount++;
-			
-			if (refreshCount < NUM_REFRESHS){				
+
+			if (refreshCount < NUM_REFRESHS) {
 				mHandler.postDelayed(this, delayMillis);
 			} else {
 				refreshCount = 0;
@@ -88,16 +93,23 @@ class HelloWidget extends BaseWidget {
 			}
 		}
 	};
-	
+
 	private void pauseHandler() {
+		if (baroReader != null) {
+			baroReader.stopReading();
+		}
 		mHandler.removeCallbacks(mUpdateTimeTask);
 	}
 
 	private void unPauseHandler() {
+		if (baroReader == null) {
+			baroReader = new BarometerReader(mContext, -1, cb);
+		}
+		baroReader.startReading();
 		mHandler.removeCallbacks(mUpdateTimeTask);
 		mHandler.postDelayed(mUpdateTimeTask, delayMillis);
 	}
-	
+
 	/**
 	 * Creates a widget extension.
 	 */
@@ -112,13 +124,13 @@ class HelloWidget extends BaseWidget {
 		lastValueMB = IntentTools.getSettings(mContext, BARO_WIDGET_SETTINGS).getFloat(LAST_VALUE_MB, 0);
 		Log.d(HelloWidgetExtensionService.LOG_TAG, "loaded " + lastValueMB);
 
-		if (baroReader == null) {
-			baroReader = new BarometerReader(mContext, -1, cb);
-		}
+		restartRefresh();
+	}
 
-		baroReader.startReading();
+	private void restartRefresh() {
 		updateScreen();
-		
+		pauseHandler();
+		refreshCount = 0;
 		unPauseHandler();
 	}
 
@@ -127,7 +139,11 @@ class HelloWidget extends BaseWidget {
 		uLastValue.setValue(lastValueMB);
 
 		Unit uLastHeight = Unit.from(Unit.METRE);
-		uLastHeight.setValue(BarometerReader.getHeight(lastValueMB));
+		if (lastValueHeightRef > 0){
+			uLastHeight.setValue(BarometerReader.getHeightFromDiff(lastValueMB, lastValueHeightRef));			
+		} else {
+			uLastHeight.setValue(BarometerReader.getHeight(lastValueMB));
+		}
 
 		// Create a bundle with last read (pressue)
 		Bundle bundlePressure = new Bundle();
@@ -148,9 +164,6 @@ class HelloWidget extends BaseWidget {
 	@Override
 	public void onStopRefresh() {
 		Log.d(HelloWidgetExtensionService.LOG_TAG, "stopRefesh");
-		if (baroReader != null) {
-			baroReader.stopReading();
-		}
 
 		Editor e = IntentTools.getSettingsEditor(mContext, BARO_WIDGET_SETTINGS);
 		e.putFloat(LAST_VALUE_MB, lastValueMB);
@@ -162,9 +175,33 @@ class HelloWidget extends BaseWidget {
 	@Override
 	public void onTouch(final int type, final int x, final int y) {
 		Log.d(HelloWidgetExtensionService.LOG_TAG, "onTouch() " + type);
-		pauseHandler();
-		refreshCount = 0;
-		unPauseHandler();
+
+		switch (type) {
+		case 0:
+			restartRefresh();
+			break;
+		case 1:
+			// longclick down + up -> refresh when up -> even click (down + up = 2)
+			longClickCount++;
+
+			if (longClickCount % 2 == 0) {
+
+				if (System.currentTimeMillis() - lastValueHeightRefSet < HEIGHT_RESET_TIMEOUT) {
+					lastValueHeightRef = 0;
+					Log.d(HelloWidgetExtensionService.LOG_TAG, "setting ref to 0");
+				} else {
+					lastValueHeightRef = lastValueMB;
+					Log.d(HelloWidgetExtensionService.LOG_TAG, "setting ref to " + lastValueMB);
+
+
+				}
+
+				lastValueHeightRefSet = System.currentTimeMillis();
+				restartRefresh();
+			}
+
+			break;
+		}
 	}
 
 	@Override
