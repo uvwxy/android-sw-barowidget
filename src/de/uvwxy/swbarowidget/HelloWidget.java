@@ -55,7 +55,8 @@ class HelloWidget extends BaseWidget {
 	public static final int WIDGET_HEIGHT_CELLS = 1;
 	private static final String BARO_WIDGET_SETTINGS = "BARO_SETTINGS";
 	private static final String LAST_VALUE_MB = "LAST_VALE_MB";
-	
+	private static final int NUM_REFRESHS = 5;
+	private int refreshCount = 0;
 	private SensorResultCallback cb = new SensorResultCallback() {
 		
 		@Override
@@ -77,8 +78,14 @@ class HelloWidget extends BaseWidget {
 
 			// ACTION!
 			updateScreen();
-
-			mHandler.postDelayed(this, delayMillis);
+			refreshCount++;
+			
+			if (refreshCount < NUM_REFRESHS){				
+				mHandler.postDelayed(this, delayMillis);
+			} else {
+				refreshCount = 0;
+				pauseHandler();
+			}
 		}
 	};
 	
@@ -155,6 +162,9 @@ class HelloWidget extends BaseWidget {
 	@Override
 	public void onTouch(final int type, final int x, final int y) {
 		Log.d(HelloWidgetExtensionService.LOG_TAG, "onTouch() " + type);
+		pauseHandler();
+		refreshCount = 0;
+		unPauseHandler();
 	}
 
 	@Override
