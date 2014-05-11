@@ -32,7 +32,7 @@ public class BaroLogic {
 
 	private long valueRelativeSetTime = System.currentTimeMillis();
 
-	public BaroLogic(Context ctx) {
+	public void setContext(Context ctx) {
 		this.mContext = ctx;
 	}
 
