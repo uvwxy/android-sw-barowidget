@@ -2,20 +2,31 @@
 <!-- px is used since this is a layout for the accessory display. -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:background="@android:color/transparent"
     android:gravity="center"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
     tools:ignore="PxUsage,Overdraw" >
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/tvPressure"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content"
         android:layout_marginTop="3px"
-        android:text="@string/hello"
-        android:textColor="@color/smart_watch_text_color_grey"
-        android:textSize="36px" />
+        android:layout_width="wrap_content"
+        android:text="@string/def_pressure"
+        android:textColor="@color/smart_watch_text_color_white"
+        android:textSize="@dimen/font_size" />
+
+    <TextView
+        android:id="@+id/tvHeight"
+        android:layout_below="@+id/tvPressure"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/def_height"
+        android:textColor="@color/smart_watch_text_color_white"
+        android:textSize="@dimen/font_size" />
 
 </RelativeLayout>
