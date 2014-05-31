@@ -54,11 +54,11 @@ public class BaroWidgetRegistrationInformation extends RegistrationInformation {
     private String extensionKey;
     private static final String EXTENSION_KEY_PREF = "EXTENSION_KEY_PREF";
 
-
     /**
      * Creates a widget registration object.
-     *
-     * @param context The context.
+     * 
+     * @param context
+     *            The context.
      */
     protected BaroWidgetRegistrationInformation(Context context) {
         if (context == null) {
@@ -96,9 +96,11 @@ public class BaroWidgetRegistrationInformation extends RegistrationInformation {
 
     /**
      * Checks if the widget size is supported.
-     *
-     * @param width The widget width.
-     * @param height The widget height.
+     * 
+     * @param width
+     *            The widget width.
+     * @param height
+     *            The widget height.
      * @return True if the widget size is supported.
      */
     @Override
@@ -117,33 +119,35 @@ public class BaroWidgetRegistrationInformation extends RegistrationInformation {
 
     @Override
     public ContentValues getExtensionRegistrationConfiguration() {
-    	Log.d("UVWXY", " REG REG REG REG REG REG REG REG REG REG REG REG REG REG REG");
+        Log.d("UVWXY", " REG REG REG REG REG REG REG REG REG REG REG REG REG REG REG");
         String iconHostapp = ExtensionUtils.getUriString(mContext, R.drawable.icon);
         String iconExtension = ExtensionUtils.getUriString(mContext, R.drawable.icon_extension);
 
         ContentValues values = new ContentValues();
 
-        values.put(Registration.ExtensionColumns.CONFIGURATION_ACTIVITY,
-                BaroWidgetPreferenceActivity.class.getName());
-        values.put(Registration.ExtensionColumns.CONFIGURATION_TEXT,
-                mContext.getString(R.string.configuration_text));
+        values.put(Registration.ExtensionColumns.CONFIGURATION_ACTIVITY, BaroWidgetPreferenceActivity.class.getName());
+        values.put(Registration.ExtensionColumns.CONFIGURATION_TEXT, mContext.getString(R.string.configuration_text));
         values.put(Registration.ExtensionColumns.NAME, mContext.getString(R.string.extension_name));
         values.put(Registration.ExtensionColumns.EXTENSION_KEY, getExtensionKey());
         values.put(Registration.ExtensionColumns.HOST_APP_ICON_URI, iconHostapp);
         values.put(Registration.ExtensionColumns.EXTENSION_ICON_URI, iconExtension);
-        values.put(Registration.ExtensionColumns.NOTIFICATION_API_VERSION,
-                getRequiredNotificationApiVersion());
+        values.put(Registration.ExtensionColumns.NOTIFICATION_API_VERSION, getRequiredNotificationApiVersion());
         values.put(Registration.ExtensionColumns.PACKAGE_NAME, mContext.getPackageName());
-
+        
+        Log.d("UVWXY", " REG DONE");
         return values;
     }
 
     /**
-     * A basic implementation of getExtensionKey
-     * Returns and saves a random string based on UUID.randomUUID()
-     *
-     * Note that this implementation doesn't guarantee random numbers on Android 4.3 and older. See <a href="https://android-developers.blogspot.com/2013/08/some-securerandom-thoughts.html">https://android-developers.blogspot.com/2013/08/some-securerandom-thoughts.html</a>
-     *
+     * A basic implementation of getExtensionKey Returns and saves a random
+     * string based on UUID.randomUUID()
+     * 
+     * Note that this implementation doesn't guarantee random numbers on Android
+     * 4.3 and older. See <a href=
+     * "https://android-developers.blogspot.com/2013/08/some-securerandom-thoughts.html"
+     * >https://android-developers.blogspot.com/2013/08/some-securerandom-
+     * thoughts.html</a>
+     * 
      * @return A saved key if it exists, otherwise a randomly generated one.
      * @see com.sonyericsson.extras.liveware.extension.util.registration.RegistrationInformation#getExtensionKey()
      */
@@ -151,8 +155,7 @@ public class BaroWidgetRegistrationInformation extends RegistrationInformation {
     public synchronized String getExtensionKey() {
         if (TextUtils.isEmpty(extensionKey)) {
             // Retrieve key from preferences
-            SharedPreferences pref = mContext.getSharedPreferences(EXTENSION_KEY_PREF,
-                    Context.MODE_PRIVATE);
+            SharedPreferences pref = mContext.getSharedPreferences(EXTENSION_KEY_PREF, Context.MODE_PRIVATE);
             extensionKey = pref.getString(EXTENSION_KEY_PREF, null);
             if (TextUtils.isEmpty(extensionKey)) {
                 // Generate a random key if not found
