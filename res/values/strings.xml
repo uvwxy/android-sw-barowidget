@@ -2,14 +2,14 @@
 <!-- No translation of sample extensions -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
-    <string name="app_name">Barometer SmartWatch Widget</string>
+    <string name="app_name">Baro-/Altimeter SmartWatch Widget</string>
     <!-- Title of preference activity -->
-    <string name="preference_activity_title">BaroAltimeter Widget Settings</string>
+    <string name="preference_activity_title">Baro-/Altimeter Widget</string>
     <!-- Configuration text shown in preferences -->
-    <string name="configuration_text">BaroAltimeter Widget Settings</string>
+    <string name="configuration_text">Baro-/Altimeter Widget</string>
     <!-- Extension name, shown in preferences -->
-    <string name="extension_name">BaroAltimeter Widget Settings</string>
-    <string name="extension_info">BaroAltimeter Widget Settings</string>
+    <string name="extension_name">Baro-/Altimeter Widget</string>
+    <string name="extension_info">Baro-/Altimeter Widget</string>
     <string name="preference_option_read_me">About</string>
     <string name="preference_key_read_me">preference_key_read_me</string>
     <string name="preference_option_read_me_txt">The BaroAltimeter Widget displays the current pressure and relative height. The widget is only compatible with WidgetAPI 3 and up</string>
