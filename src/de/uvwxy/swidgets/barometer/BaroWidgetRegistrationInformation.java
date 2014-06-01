@@ -113,7 +113,11 @@ public class BaroWidgetRegistrationInformation extends RegistrationInformation {
     protected WidgetClassList getWidgetClasses(Context context, String hostAppPackageName,
             WidgetContainer widgetContainer) {
         // Return the widget to register.
-        return new WidgetClassList(BaroWidget.class);
+        WidgetClassList widgetList = new WidgetClassList();
+        widgetList.add(BaroWidget.class);
+        widgetList.add(BaroWidget1x1.class);
+        widgetList.add(AltiWidget1x1.class);
+        return widgetList;
     }
 
     @Override

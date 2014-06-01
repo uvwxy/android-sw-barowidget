@@ -9,24 +9,14 @@
     tools:ignore="PxUsage,Overdraw" >
 
     <TextView
-        android:id="@+id/tvPressure"
+        android:gravity="center"
+        android:id="@+id/tv1x1"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3px"
         android:layout_width="wrap_content"
         android:text="@string/def_pressure"
-        android:textColor="@color/smart_watch_text_color_white"
-        android:textSize="@dimen/font_size"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tvHeight"
-        android:layout_below="@+id/tvPressure"
-        android:layout_centerHorizontal="true"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/def_height"
         android:textColor="@color/smart_watch_text_color_white"
         android:textSize="@dimen/font_size"
         android:textStyle="bold" />

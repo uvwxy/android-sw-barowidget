@@ -49,8 +49,8 @@ import de.uvwxy.units.Unit;
  * This demonstrates how to implement a simple text widget.
  */
 class BaroWidget extends BaseWidget {
-    public static final int WIDGET_WIDTH_CELLS = 2;
-    public static final int WIDGET_HEIGHT_CELLS = 1;
+    protected int WIDGET_WIDTH_CELLS = 2;
+    protected int WIDGET_HEIGHT_CELLS = 1;
     private static final int TOTAL_REFRESH_COUNT = 5;
     private static final long REFRESH_TIMEOUT_MILLIS = 1000;
     private int refreshCount = 0;
@@ -59,7 +59,7 @@ class BaroWidget extends BaseWidget {
     String unitPressure = "MILLI_BAR";
     String unitLength = "METRE";
 
-    private BaroLogic baro;
+    protected BaroLogic baro;
     private BaroWidgetRegistrationInformation baroRegInfo;
     private OnSharedPreferenceChangeListener listener;
     private SharedPreferences prefs;
@@ -155,7 +155,7 @@ class BaroWidget extends BaseWidget {
         }
     }
 
-    private void updateScreen() {
+    protected void updateScreen() {
         Unit uLastValue = Unit.from(Unit.MILLI_BAR);
         float baroMillis = baro.getBlockedValue();
         uLastValue.setValue(baroMillis);
