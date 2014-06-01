@@ -33,7 +33,6 @@ Copyright (c) 2011-2013, Sony Mobile Communications AB
 package de.uvwxy.barometer.swidget;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 
 import com.sonyericsson.extras.liveware.aef.control.Control;
@@ -47,54 +46,53 @@ import de.uvwxy.units.Unit;
  * This demonstrates how to implement a simple text widget.
  */
 class BaroWidget extends BaseWidget {
-
     public static final int WIDGET_WIDTH_CELLS = 2;
     public static final int WIDGET_HEIGHT_CELLS = 1;
-    private static final int NUM_REFRESHS = 5;
+    private static final int TOTAL_REFRESH_COUNT = 5;
+    private static final long REFRESH_TIMEOUT_MILLIS = 1000;
     private static final long HEIGHT_RESET_TIMEOUT = 3000;
     private int refreshCount = 0;
     private int longClickCount = 0;
 
     private BaroLogic baro;
-
-    private Handler mHandler = new Handler();
-    private long delayMillis = 1000;
+    private BaroWidgetRegistrationInformation baroRegInfo;
 
     /**
      * Creates a widget extension.
      */
     public BaroWidget(WidgetBundle bundle) {
         super(bundle);
-        Log.d("UVWXY", " BaroWidget INIT");
 
+        baro = new BaroLogic(mContext);
+        baroRegInfo = new BaroWidgetRegistrationInformation(mContext);
     }
 
     @Override
     public void onStartRefresh() {
-        if (baro == null) {
-            baro = new BaroLogic();
-        }
+
         Log.d(BaroWidgetExtensionService.LOG_TAG, "startRefresh");
-        baro.loadValue(mContext);
-        baro.loadValueRelative(mContext);
-        restartRefresh();
+        baro.loadValue();
+        baro.loadValueRelative();
+        // user action, always continue with N refreshs directly
+        restartRefreshLoop(0, true);
     }
 
     @Override
     public void onStopRefresh() {
         Log.d(BaroWidgetExtensionService.LOG_TAG, "stopRefesh");
-        baro.storeValue(mContext);
-        baro.storeValueRelative(mContext);
-        pauseHandler();
+        baro.storeValue();
+        baro.storeValueRelative();
+        cancelScheduledRefresh(baroRegInfo.getExtensionKey());
     }
 
     @Override
     public void onTouch(final int type, final int x, final int y) {
-        Log.d(BaroWidgetExtensionService.LOG_TAG, "onTouch() " + type);
-
+        Log.d(BaroWidgetExtensionService.LOG_TAG, "onTouch() " + type + "/" + longClickCount);
+        float baroMillis = baro.getBlockedValue();
         switch (type) {
         case 0:
-            restartRefresh();
+            // user action, always continue with N refreshs directly
+            restartRefreshLoop(0, true);
             break;
         case 1:
             // longclick down + up -> refresh when up -> even click (down + up = 2)
@@ -106,34 +104,50 @@ class BaroWidget extends BaseWidget {
                     baro.setValueRelative(0f);
                     Log.d(BaroWidgetExtensionService.LOG_TAG, "setting ref to 0");
                 } else {
-                    baro.setValueRelative(baro.getValue());
-                    Log.d(BaroWidgetExtensionService.LOG_TAG, "setting ref to " + baro.getValue());
+                    baro.setValueRelative(baroMillis);
+                    Log.d(BaroWidgetExtensionService.LOG_TAG, "setting ref to " + baroMillis);
 
                 }
 
                 baro.setValueRelativeSetTime(System.currentTimeMillis());
-                restartRefresh();
+                // user action, always continue with N refreshs directly
+                restartRefreshLoop(0, true);
             }
 
             break;
         }
     }
 
-    private void restartRefresh() {
-        pauseHandler();
-        refreshCount = 0;
-        unPauseHandler();
+    private void restartRefreshLoop(long timeoutMillis, boolean restart) {
+        if (restart) {
+            refreshCount = 0;
+        }
+        long now = System.currentTimeMillis();
+        String key = baroRegInfo.getExtensionKey();
+        scheduleRefresh(now + timeoutMillis, key);
+    }
+
+    @Override
+    public void onScheduledRefresh() {
+        updateScreen();
+
+        if (refreshCount < TOTAL_REFRESH_COUNT) {
+            refreshCount++;
+            // do not restart, always continue
+            restartRefreshLoop(REFRESH_TIMEOUT_MILLIS, false);
+        }
     }
 
     private void updateScreen() {
         Unit uLastValue = Unit.from(Unit.MILLI_BAR);
-        uLastValue.setValue(baro.getValue());
+        float baroMillis = baro.getBlockedValue();
+        uLastValue.setValue(baroMillis);
 
         Unit uLastHeight = Unit.from(Unit.METRE);
         if (baro.getValueRelative() > 0) {
-            uLastHeight.setValue(BarometerReader.getHeightFromDiff(baro.getValue(), baro.getValueRelative()));
+            uLastHeight.setValue(BarometerReader.getHeightFromDiff(baroMillis, baro.getValueRelative()));
         } else {
-            uLastHeight.setValue(BarometerReader.getHeight(baro.getValue()));
+            uLastHeight.setValue(BarometerReader.getHeight(baroMillis));
         }
 
         // Create a bundle with last read (pressue)
@@ -149,34 +163,7 @@ class BaroWidget extends BaseWidget {
         Bundle[] layoutData = new Bundle[] { bundlePressure, bundleHeight };
 
         // Send a UI when the widget is visible.
-        showLayout(R.layout.layout_widget, null);
-    }
-
-    private Runnable mUpdateTimeTask = new Runnable() {
-
-        public void run() {
-            updateScreen();
-            refreshCount++;
-
-            if (refreshCount < NUM_REFRESHS) {
-                mHandler.postDelayed(this, delayMillis);
-            } else {
-                refreshCount = 0;
-                pauseHandler();
-            }
-        }
-    };
-
-    private void pauseHandler() {
-        baro.stop();
-        mHandler.removeCallbacks(mUpdateTimeTask);
-    }
-
-    private void unPauseHandler() {
-        baro.start(mContext);
-        updateScreen();
-        mHandler.removeCallbacks(mUpdateTimeTask);
-        mHandler.postDelayed(mUpdateTimeTask, delayMillis);
+        showLayout(R.layout.layout_widget, layoutData);
     }
 
     @Override

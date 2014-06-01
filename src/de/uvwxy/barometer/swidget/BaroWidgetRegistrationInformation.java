@@ -52,7 +52,7 @@ public class BaroWidgetRegistrationInformation extends RegistrationInformation {
 
     final Context mContext;
     private String extensionKey;
-    private static final String EXTENSION_KEY_PREF = "EXTENSION_KEY_PREF";
+    private static final String EXTENSION_KEY_PREF = "BARO_EXTENSION_PREF";
 
     /**
      * Creates a widget registration object.
