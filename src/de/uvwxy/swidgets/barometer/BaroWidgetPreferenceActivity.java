@@ -35,17 +35,21 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 import android.util.Log;
 
 /**
  * This preference activity provides a readme dialog containing information
  * about this sample project as well as usage instructions.
  */
-public class BaroWidgetPreferenceActivity extends PreferenceActivity {
+public class BaroWidgetPreferenceActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
     private static final int DIALOG_READ_ME = 1;
 
     @SuppressWarnings("deprecation")
@@ -67,6 +71,28 @@ public class BaroWidgetPreferenceActivity extends PreferenceActivity {
             }
         });
 
+        // show the current value in the settings screen
+        for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); i++) {
+            initSummary(getPreferenceScreen().getPreference(i));
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        updatePreferences(findPreference(key));
     }
 
     @Override
@@ -74,12 +100,12 @@ public class BaroWidgetPreferenceActivity extends PreferenceActivity {
         Dialog dialog = null;
 
         switch (id) {
-            case DIALOG_READ_ME:
-                dialog = createReadMeDialog();
-                break;
-            default:
-                Log.w(BaroWidgetExtensionService.LOG_TAG, "Not a valid dialog id: " + id);
-                break;
+        case DIALOG_READ_ME:
+            dialog = createReadMeDialog();
+            break;
+        default:
+            Log.w(BaroWidgetExtensionService.LOG_TAG, "Not a valid dialog id: " + id);
+            break;
         }
 
         return dialog;
@@ -87,13 +113,12 @@ public class BaroWidgetPreferenceActivity extends PreferenceActivity {
 
     /**
      * Create the readme dialog.
-     *
+     * 
      * @return The dialog.
      */
     private Dialog createReadMeDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.preference_option_read_me_txt)
-                .setTitle(R.string.preference_option_read_me)
+        builder.setMessage(R.string.preference_option_read_me_txt).setTitle(R.string.preference_option_read_me)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setPositiveButton(android.R.string.ok, new OnClickListener() {
 
@@ -105,4 +130,21 @@ public class BaroWidgetPreferenceActivity extends PreferenceActivity {
         return builder.create();
     }
 
+    private void initSummary(Preference p) {
+        if (p instanceof PreferenceCategory) {
+            PreferenceCategory cat = (PreferenceCategory) p;
+            for (int i = 0; i < cat.getPreferenceCount(); i++) {
+                initSummary(cat.getPreference(i));
+            }
+        } else {
+            updatePreferences(p);
+        }
+    }
+
+    private void updatePreferences(Preference p) {
+        if (p instanceof ListPreference) {
+            ListPreference listPref = (ListPreference) p;
+            p.setSummary(listPref.getEntry());
+        }
+    }
 }

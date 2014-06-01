@@ -32,7 +32,11 @@ Copyright (c) 2011-2013, Sony Mobile Communications AB
 
 package de.uvwxy.swidgets.barometer;
 
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.sonyericsson.extras.liveware.aef.control.Control;
@@ -53,8 +57,13 @@ class BaroWidget extends BaseWidget {
     private int refreshCount = 0;
     private int longClickCount = 0;
 
+    String unitPressure = "MILLI_BAR";
+    String unitLength = "METRE";
+
     private BaroLogic baro;
     private BaroWidgetRegistrationInformation baroRegInfo;
+    private OnSharedPreferenceChangeListener listener;
+    private SharedPreferences prefs;
 
     /**
      * Creates a widget extension.
@@ -64,17 +73,30 @@ class BaroWidget extends BaseWidget {
 
         baro = new BaroLogic(mContext);
         baroRegInfo = new BaroWidgetRegistrationInformation(mContext);
+
     }
 
     @Override
     public void onStartRefresh() {
-
         Log.d(BaroWidgetExtensionService.LOG_TAG, "startRefresh");
         baro.loadValue();
         baro.loadValueRelative();
         baro.loadValueRelativeMode();
         // user action, always continue with N refreshs directly
         restartRefreshLoop(0, true);
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        unitPressure = prefs.getString("baro_unit", "MILLI_BAR");
+        unitLength = prefs.getString("length_unit", "METRE");
+
+        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                unitPressure = prefs.getString("baro_unit", "MILLI_BAR");
+                unitLength = prefs.getString("length_unit", "METRE");
+            }
+        };
+
+        prefs.registerOnSharedPreferenceChangeListener(listener);
     }
 
     @Override
@@ -84,6 +106,7 @@ class BaroWidget extends BaseWidget {
         baro.storeValueRelative();
         baro.storeValueRelativeMode();
         cancelScheduledRefresh(baroRegInfo.getExtensionKey());
+        prefs.unregisterOnSharedPreferenceChangeListener(listener);
     }
 
     @Override
@@ -148,12 +171,12 @@ class BaroWidget extends BaseWidget {
         // Create a bundle with last read (pressue)
         Bundle bundlePressure = new Bundle();
         bundlePressure.putInt(Widget.Intents.EXTRA_LAYOUT_REFERENCE, R.id.tvPressure);
-        bundlePressure.putString(Control.Intents.EXTRA_TEXT, uLastValue.toString());
+        bundlePressure.putString(Control.Intents.EXTRA_TEXT, uLastValue.to(Unit.from(unitPressure)).toString());
 
         // Create a bundle with last read value (height)
         Bundle bundleHeight = new Bundle();
         bundleHeight.putInt(Widget.Intents.EXTRA_LAYOUT_REFERENCE, R.id.tvHeight);
-        bundleHeight.putString(Control.Intents.EXTRA_TEXT, uLastHeight.toString());
+        bundleHeight.putString(Control.Intents.EXTRA_TEXT, uLastHeight.to(Unit.from(unitLength)).toString());
 
         Bundle[] layoutData = new Bundle[] { bundlePressure, bundleHeight };
 
