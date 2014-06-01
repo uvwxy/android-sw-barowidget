@@ -35,7 +35,6 @@ package de.uvwxy.swidgets.barometer;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -196,7 +195,7 @@ class BaroWidget extends BaseWidget {
 
     @Override
     public int getPreviewUri() {
-        return R.drawable.widget_frame;
+        return R.drawable.swidgets_baro;
     }
 
     @Override
