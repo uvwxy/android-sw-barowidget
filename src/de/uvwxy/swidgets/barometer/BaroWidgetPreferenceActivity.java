@@ -29,7 +29,7 @@ Copyright (c) 2011-2014, Sony Mobile Communications AB
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package de.uvwxy.barometer.swidget;
+package de.uvwxy.swidgets.barometer;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

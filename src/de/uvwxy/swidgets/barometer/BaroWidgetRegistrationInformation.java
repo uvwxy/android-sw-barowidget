@@ -30,7 +30,7 @@ Copyright (c) 2011-2014, Sony Mobile Communications AB
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package de.uvwxy.barometer.swidget;
+package de.uvwxy.swidgets.barometer;
 
 import java.util.UUID;
 

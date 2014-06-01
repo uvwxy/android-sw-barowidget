@@ -1,4 +1,4 @@
-package de.uvwxy.barometer.swidget;
+package de.uvwxy.swidgets.barometer;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
