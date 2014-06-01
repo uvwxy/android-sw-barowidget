@@ -12,7 +12,11 @@
     <string name="extension_info">Baro-/Altimeter Widget</string>
     <string name="preference_option_read_me">About</string>
     <string name="preference_key_read_me">preference_key_read_me</string>
-    <string name="preference_option_read_me_txt">The BaroAltimeter Widget displays the current pressure and relative height. The widget is only compatible with WidgetAPI 3 and up</string>
+    <string name="preference_option_read_me_txt">The BaroAltimeter Widget displays the current pressure and relative height.\n\n
+        CLICK: Refresh and switch between relative/absolute height.\n
+        LONG CLICK: Save current value for relative height.\n\n
+        
+        The widget is only compatible with WidgetAPI 3 and up</string>
     <string name="def_pressure">999,44 mbar</string>
     <string name="def_height">115,6 m</string>
     <string name="pref_BaroUnit">Pressure Unit</string>
