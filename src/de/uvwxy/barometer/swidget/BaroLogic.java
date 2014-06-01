@@ -14,8 +14,10 @@ public class BaroLogic {
     private static final String BARO_WIDGET_SETTINGS = "BARO_SETTINGS";
     private static final String VALUE = "VALUE";
     private static final String VALUE_RELATIVE = "VALUE_RELATIVE";
+    private static final String VALUE_RELATIVE_MODE = "VALUE_RELATIVE_MODE";
+
     private Lock lock = new ReentrantLock();
-    
+
     private SensorResultCallback cb = new SensorResultCallback() {
 
         @Override
@@ -32,6 +34,8 @@ public class BaroLogic {
     private float value = 0f;
 
     private float valueRelative = 0f;
+
+    private int valueRelativeMode = 0; // 0 = N.N. as ref
 
     private long valueRelativeSetTime = System.currentTimeMillis();
 
@@ -65,6 +69,18 @@ public class BaroLogic {
         Log.d(BaroWidgetExtensionService.LOG_TAG, "stored " + valueRelative);
     }
 
+    public void loadValueRelativeMode() {
+        valueRelativeMode = IntentTools.getSettings(mContext, BARO_WIDGET_SETTINGS).getInt(VALUE_RELATIVE_MODE, 0);
+        Log.d(BaroWidgetExtensionService.LOG_TAG, "loaded " + valueRelativeMode);
+    }
+
+    public void storeValueRelativeMode() {
+        Editor e = IntentTools.getSettingsEditor(mContext, BARO_WIDGET_SETTINGS);
+        e.putInt(VALUE_RELATIVE_MODE, valueRelativeMode);
+        e.commit();
+        Log.d(BaroWidgetExtensionService.LOG_TAG, "stored " + valueRelativeMode);
+    }
+
     public float getBlockedValue() {
         if (baroReader == null) {
             // -2 stops reader after every start
@@ -83,7 +99,19 @@ public class BaroLogic {
     }
 
     public float getValueRelative() {
-        return valueRelative;
+        switch (valueRelativeMode) {
+        case 1:
+            return valueRelative;
+        case 2:
+            return 0;
+        default:
+            return 0;
+        }
+    }
+
+    public void nextRelativeMode() {
+        // other heights possible
+        valueRelativeMode = (valueRelativeMode + 1) % 2;
     }
 
     public void setValueRelative(float valueRelative) {

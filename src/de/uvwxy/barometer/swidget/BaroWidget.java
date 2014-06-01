@@ -50,7 +50,6 @@ class BaroWidget extends BaseWidget {
     public static final int WIDGET_HEIGHT_CELLS = 1;
     private static final int TOTAL_REFRESH_COUNT = 5;
     private static final long REFRESH_TIMEOUT_MILLIS = 1000;
-    private static final long HEIGHT_RESET_TIMEOUT = 3000;
     private int refreshCount = 0;
     private int longClickCount = 0;
 
@@ -73,6 +72,7 @@ class BaroWidget extends BaseWidget {
         Log.d(BaroWidgetExtensionService.LOG_TAG, "startRefresh");
         baro.loadValue();
         baro.loadValueRelative();
+        baro.loadValueRelativeMode();
         // user action, always continue with N refreshs directly
         restartRefreshLoop(0, true);
     }
@@ -82,6 +82,7 @@ class BaroWidget extends BaseWidget {
         Log.d(BaroWidgetExtensionService.LOG_TAG, "stopRefesh");
         baro.storeValue();
         baro.storeValueRelative();
+        baro.storeValueRelativeMode();
         cancelScheduledRefresh(baroRegInfo.getExtensionKey());
     }
 
@@ -92,6 +93,7 @@ class BaroWidget extends BaseWidget {
         switch (type) {
         case 0:
             // user action, always continue with N refreshs directly
+            baro.nextRelativeMode();
             restartRefreshLoop(0, true);
             break;
         case 1:
@@ -99,15 +101,8 @@ class BaroWidget extends BaseWidget {
             longClickCount++;
 
             if (longClickCount % 2 == 0) {
-
-                if (System.currentTimeMillis() - baro.getValueRelativeSetTime() < HEIGHT_RESET_TIMEOUT) {
-                    baro.setValueRelative(0f);
-                    Log.d(BaroWidgetExtensionService.LOG_TAG, "setting ref to 0");
-                } else {
-                    baro.setValueRelative(baroMillis);
-                    Log.d(BaroWidgetExtensionService.LOG_TAG, "setting ref to " + baroMillis);
-
-                }
+                baro.setValueRelative(baroMillis);
+                Log.d(BaroWidgetExtensionService.LOG_TAG, "setting ref to " + baroMillis);
 
                 baro.setValueRelativeSetTime(System.currentTimeMillis());
                 // user action, always continue with N refreshs directly
