@@ -118,8 +118,8 @@ public class BaroWidgetRegistrationInformation extends RegistrationInformation {
 
     @Override
     public ContentValues getExtensionRegistrationConfiguration() {
-        String iconHostapp = ExtensionUtils.getUriString(mContext, R.drawable.icon);
-        String iconExtension = ExtensionUtils.getUriString(mContext, R.drawable.icon_extension);
+        String iconHostapp = ExtensionUtils.getUriString(mContext, R.drawable.ic_launcher);
+        String iconExtension = ExtensionUtils.getUriString(mContext, R.drawable.ic_launcher);
 
         ContentValues values = new ContentValues();
 
