@@ -119,7 +119,6 @@ public class BaroWidgetRegistrationInformation extends RegistrationInformation {
 
     @Override
     public ContentValues getExtensionRegistrationConfiguration() {
-        Log.d("UVWXY", " REG REG REG REG REG REG REG REG REG REG REG REG REG REG REG");
         String iconHostapp = ExtensionUtils.getUriString(mContext, R.drawable.icon);
         String iconExtension = ExtensionUtils.getUriString(mContext, R.drawable.icon_extension);
 
@@ -133,8 +132,7 @@ public class BaroWidgetRegistrationInformation extends RegistrationInformation {
         values.put(Registration.ExtensionColumns.EXTENSION_ICON_URI, iconExtension);
         values.put(Registration.ExtensionColumns.NOTIFICATION_API_VERSION, getRequiredNotificationApiVersion());
         values.put(Registration.ExtensionColumns.PACKAGE_NAME, mContext.getPackageName());
-        
-        Log.d("UVWXY", " REG DONE");
+
         return values;
     }
 
