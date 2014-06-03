@@ -8,7 +8,8 @@
     <!-- Configuration text shown in preferences -->
     <string name="configuration_text">Baro-/Altimeter Widget</string>
     <!-- Extension name, shown in preferences -->
-    <string name="extension_name">Baro/Alti 2x1</string>
+    <string name="extension_name">Baro/Altimeter Widget Settings</string>
+    <string name="extension_name_baroalti_2x1">Baro/Alti 2x1</string>
     <string name="extension_name_baro_1x1">Baro 1x1</string>
     <string name="extension_name_alti_1x1">Alti 1x1</string>
     <string name="extension_info">Baro-/Altimeter Widget</string>
@@ -25,5 +26,8 @@
     <string name="pref_BaroUnit_default">MILLI_BAR</string>
     <string name="pref_LengthUnit">Length Unit</string>
     <string name="pref_LengthUnit_default">METRE</string>
+    <string name="pref_showRelativePressureOff">Show current pressure with relative height</string>
+    <string name="pref_showRelativePressureOn">Show relative pressure with relative height</string>
+    <string name="pref_showRelativePressure">Show relative pressure</string>
 
 </resources>

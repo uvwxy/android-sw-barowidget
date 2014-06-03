@@ -64,6 +64,9 @@ class BaroWidget extends BaseWidget {
     private OnSharedPreferenceChangeListener listener;
     private SharedPreferences prefs;
 
+    private boolean showRelativePressure = false;
+
+    
     /**
      * Creates a widget extension.
      */
@@ -87,11 +90,13 @@ class BaroWidget extends BaseWidget {
         prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         unitPressure = prefs.getString("baro_unit", "MILLI_BAR");
         unitLength = prefs.getString("length_unit", "METRE");
+        showRelativePressure = prefs.getBoolean("show_relative_pressure", false);
 
         listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                 unitPressure = prefs.getString("baro_unit", "MILLI_BAR");
                 unitLength = prefs.getString("length_unit", "METRE");
+                showRelativePressure = prefs.getBoolean("show_relative_pressure", false);
             }
         };
 
@@ -158,7 +163,13 @@ class BaroWidget extends BaseWidget {
     protected void updateScreen() {
         Unit uLastValue = Unit.from(Unit.MILLI_BAR);
         float baroMillis = baro.getBlockedValue();
-        uLastValue.setValue(baroMillis);
+        
+        float displayValue = baroMillis;
+        if (showRelativePressure){
+            displayValue -= baro.getValueRelative();
+        }
+        
+        uLastValue.setValue(displayValue);
 
         Unit uLastHeight = Unit.from(Unit.METRE);
         if (baro.getValueRelative() > 0) {
@@ -200,6 +211,6 @@ class BaroWidget extends BaseWidget {
 
     @Override
     public int getName() {
-        return R.string.extension_name;
+        return R.string.extension_name_baroalti_2x1;
     }
 }

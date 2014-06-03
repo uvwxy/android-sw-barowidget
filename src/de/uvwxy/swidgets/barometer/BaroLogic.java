@@ -11,6 +11,7 @@ import de.uvwxy.sensors.BarometerReader;
 import de.uvwxy.sensors.SensorReader.SensorResultCallback;
 
 public class BaroLogic {
+    private static final int SHOW_RELATIVE_VALUE = 1;
     private static final String BARO_WIDGET_SETTINGS = "BARO_SETTINGS";
     private static final String VALUE = "VALUE";
     private static final String VALUE_RELATIVE = "VALUE_RELATIVE";
@@ -87,9 +88,7 @@ public class BaroLogic {
             baroReader = new BarometerReader(mContext, -2, cb);
         }
         baroReader.startReading();
-        Log.d(BaroWidgetExtensionService.LOG_TAG, "locked for value");
         lock.tryLock();
-        Log.d(BaroWidgetExtensionService.LOG_TAG, "unlocked");
 
         return value;
     }
@@ -100,7 +99,7 @@ public class BaroLogic {
 
     public float getValueRelative() {
         switch (valueRelativeMode) {
-        case 1:
+        case SHOW_RELATIVE_VALUE:
             return valueRelative;
         case 2:
             return 0;
@@ -125,5 +124,4 @@ public class BaroLogic {
     public void setValueRelativeSetTime(long valueRelativeSetTime) {
         this.valueRelativeSetTime = valueRelativeSetTime;
     }
-
 }
