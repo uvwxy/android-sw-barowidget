@@ -57,12 +57,21 @@ class BaroWidget1x1 extends BaroWidget {
     protected void updateScreen() {
         Unit uLastValue = Unit.from(Unit.MILLI_BAR);
         float baroMillis = baro.getBlockedValue();
+        if (showRelativePressure){
+            baroMillis -= baro.getValueRelative();
+        }
+        
         uLastValue.setValue(baroMillis);
-
+        
         // Create a bundle with last read (pressue)
         Bundle bundle1x1 = new Bundle();
         bundle1x1.putInt(Widget.Intents.EXTRA_LAYOUT_REFERENCE, R.id.tv1x1);
-        bundle1x1.putString(Control.Intents.EXTRA_TEXT, uLastValue.to(Unit.from(unitPressure)).toString());
+        
+        String strPressure = uLastValue.to(Unit.from(unitPressure)).toString();
+        if (showRelativePressure && baro.getValueRelative() > 0){
+            strPressure = strPressure + "~";
+        }
+        bundle1x1.putString(Control.Intents.EXTRA_TEXT, strPressure);
 
         Bundle[] layoutData = new Bundle[] { bundle1x1 };
 

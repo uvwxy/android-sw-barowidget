@@ -22,7 +22,7 @@
         android:title="@string/pref_LengthUnit" />
 
     <CheckBoxPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:key="show_relative_pressure"
         android:summaryOff="@string/pref_showRelativePressureOff"
         android:summaryOn="@string/pref_showRelativePressureOn"

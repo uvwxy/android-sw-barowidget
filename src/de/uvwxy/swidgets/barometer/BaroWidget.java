@@ -64,7 +64,7 @@ class BaroWidget extends BaseWidget {
     private OnSharedPreferenceChangeListener listener;
     private SharedPreferences prefs;
 
-    private boolean showRelativePressure = false;
+    protected boolean showRelativePressure = false;
 
     
     /**
@@ -127,7 +127,7 @@ class BaroWidget extends BaseWidget {
             // longclick down + up -> refresh when up -> even click (down + up = 2)
             longClickCount++;
 
-            if (longClickCount % 2 == 0) {
+            if (longClickCount % 1 == 0) {
                 baro.setValueRelative(baroMillis);
                 Log.d(BaroWidgetExtensionService.LOG_TAG, "setting ref to " + baroMillis);
 
@@ -181,12 +181,23 @@ class BaroWidget extends BaseWidget {
         // Create a bundle with last read (pressue)
         Bundle bundlePressure = new Bundle();
         bundlePressure.putInt(Widget.Intents.EXTRA_LAYOUT_REFERENCE, R.id.tvPressure);
-        bundlePressure.putString(Control.Intents.EXTRA_TEXT, uLastValue.to(Unit.from(unitPressure)).toString());
+        
+        String strPressure = uLastValue.to(Unit.from(unitPressure)).toString();
+        if (showRelativePressure && baro.getValueRelative() > 0){
+            strPressure = strPressure + "~";
+        }
+        bundlePressure.putString(Control.Intents.EXTRA_TEXT, strPressure);
 
         // Create a bundle with last read value (height)
         Bundle bundleHeight = new Bundle();
         bundleHeight.putInt(Widget.Intents.EXTRA_LAYOUT_REFERENCE, R.id.tvHeight);
-        bundleHeight.putString(Control.Intents.EXTRA_TEXT, uLastHeight.to(Unit.from(unitLength)).toString());
+        
+        String strHeight = uLastHeight.to(Unit.from(unitLength)).toString();
+        if (baro.getValueRelative() > 0){
+            strHeight = strHeight + "~";
+        }
+        
+        bundleHeight.putString(Control.Intents.EXTRA_TEXT, strHeight);
 
         Bundle[] layoutData = new Bundle[] { bundlePressure, bundleHeight };
 

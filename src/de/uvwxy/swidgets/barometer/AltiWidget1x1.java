@@ -74,7 +74,12 @@ class AltiWidget1x1 extends BaroWidget {
         // Create a bundle with last read (pressue)
         Bundle bundleHeight = new Bundle();
         bundleHeight.putInt(Widget.Intents.EXTRA_LAYOUT_REFERENCE, R.id.tv1x1);
-        bundleHeight.putString(Control.Intents.EXTRA_TEXT, uLastHeight.to(Unit.from(unitLength)).toString());
+        
+        String strHeight = uLastHeight.to(Unit.from(unitLength)).toString();
+        if (baro.getValueRelative() > 0) {
+            strHeight = strHeight + "~";
+        }
+        bundleHeight.putString(Control.Intents.EXTRA_TEXT, strHeight);
 
         Bundle[] layoutData = new Bundle[] { bundleHeight };
 
